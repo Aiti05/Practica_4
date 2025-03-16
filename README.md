@@ -1,6 +1,5 @@
 ## **Practica 4: SISTEMAS OPERATIVOS EN TIEMPO REAL**
-En esta práctica va enfocada en los sistemas operativos en tiempo real, especialmente 
-la ejecución de tareas, dónde se dividirán entre ellas el tiempo de uso para realizarlas.
+Esta práctica se centra en los sistemas operativos en tiempo real, especialmente en la ejecución de tareas, donde se gestiona y distribuye el tiempo de uso entre ellas para su realización.
 
 ## **Ejercicio Practico 1**
 **Codigo main.cpp 1r parte:**
@@ -39,11 +38,12 @@ void loop() {
 
 
 ```
-El funcionamiento de el código proporcionado, se basa en que crea 2 tareas donde se utliza un un sistema de operativo de tiempo real FreeRTOS.
+El código proporcionado crea dos tareas utilizando el sistema operativo en tiempo real FreeRTOS.
 
-La tarea principal: se ejecuta en la función loop(), imprime repetidamente un mensaje ("this is ESP32 Task") en el puerto serie y espera 1 segundo entre cada impresión.
-La segunda tarea: creada en la función setup() y llamada anotherTask, también imprime repetidamente un mensaje ("this is another Task") en el puerto serie y espera 1 segundo entre cada impresión.
-Las salidas que se muestran ppor el puerto serie son las siguientes:
+La tarea principal, ejecutada en la función loop(), imprime repetidamente el mensaje ("this is ESP32 Task") en el puerto serie, con un intervalo de 1 segundo entre cada impresión.
+La segunda tarea, creada en la función setup() y llamada anotherTask, también imprime repetidamente el mensaje ("this is another Task") en el puerto serie, con un intervalo de 1 segundo entre cada impresión.
+
+Esto sale por pantalla al ejecutarse:
 ```
 this is another Task
 this is ESP32 Task
@@ -113,26 +113,9 @@ void loop() {
 
 
 ```
-En el anterior código tenemos un programa donde con la ayuda de un semáforo, se pueden 
-utilizar dos tareas, (una que enciende el led ) y otra tarea ( que apaga el Led), en 
-el programa se puede ver que el tiempo del DELAY es de 1 segundo, lo cual cada 1 segundo se van alternando.
-
-Funciones / Subprogramas utilizados:
-En este codigo tenemos 4 funciones para llevarlo a cabo.
-
-Función setup() :
-se inicia la comunicación serial y se configura el pin del LED como salida.
-
-Función loop():
-no es necesario realizar ninguna acción en el bucle principal.
-
-Funciones : encenderLED() y apagarLED():
-son las tareas que se ejecutarán concurrentemente. Ambas funciones son ciclos infinitos (for (;;)) 
-que alternan entre encender y apagar el LED con un intervalo de un segundo.
-
-Salida puerto serie:
-Alternando las 2 tareas, se imprime "LED HIGH" cuando el LED se enciende, y en la función apagarLED(), 
-se imprime "LED LOW" cuando el LED se apaga.
+En este programa, se utilizan dos tareas con la ayuda de un semáforo: una para encender el LED y otra para apagarlo. El tiempo de delay es de 1 segundo, lo que provoca que las tareas se alternen cada segundo.
+Se utilizan varias funciones como la función setup() que se inicia la comunicación serial y se configura el pin del LED como salida, tambien esta la función loop() qu no realiza ninguna acción en el bucle principal y por ultimo las funciones encenderLED() y apagarLED() que son las tareas que se ejecutan de forma concurrente. Ambas funciones son ciclos infinitos que alternan entre encender y apagar el LED con un intervalo de 1 segundo.
+Por pantalla se imprime "LED ENCENDIDO" cuando el LED se activa y "LED APAGADO" cuando se desactiva.
 
 ```
 LED ENCENDIDO
@@ -276,6 +259,22 @@ void loop() {
     vTaskDelay(portMAX_DELAY);
 }
 ```
+Este código implementa un reloj digital en un ESP32 con FreeRTOS, permitiendo la visualización de la hora, el cambio de modo y el ajuste manual mediante botones. Utiliza colas para gestionar eventos de botones y un mutex para proteger las variables compartidas.
+
+El reloj avanza cada segundo gracias a una tarea que actualiza los segundos, minutos y horas cuando corresponde. Otra tarea procesa los botones: uno cambia el modo (reloj, ajuste de horas o ajuste de minutos), y el otro incrementa el valor según el modo seleccionado. Además, una tarea muestra la hora por el puerto serie solo cuando hay cambios, y otra controla los LEDs, encendiendo uno cada segundo y otro cuando se está en modo ajuste.
+
+Gracias a la multitarea, el reloj se mantiene actualizado mientras los botones y la visualización funcionan en paralelo sin interrupciones. 
+
+La salida que se ve en la pantalla es:
+```
+Hora: 12:34:56  | Modo: 0
+Hora: 12:34:57  | Modo: 0
+Hora: 12:34:58  | Modo: 0
+...
+
+```
+
+
 
 ### **Juego Web:**
 **Codigo main.cpp:**
@@ -427,7 +426,20 @@ void loop() {
 
 ```
 
+Este código implementa un juego de reacción en un ESP32 con WiFi y FreeRTOS. Un servidor web permite iniciar/detener el juego y ajustar la dificultad, mientras que tareas en paralelo controlan la activación de LEDs y la detección de pulsaciones de botones.
 
+El ESP32 crea un punto de acceso ESP32_Game y maneja eventos web y físicos con colas e interrupciones. Una tarea enciende aleatoriamente un LED y el jugador debe presionar el botón correspondiente; si acierta, suma puntos, si falla, los pierde. Otra tarea gestiona el tiempo restante, finalizando el juego al llegar a cero.
+
+El puerto serie muestra la IP del servidor y actualiza la puntuación y el tiempo restante en tiempo real. Con WiFi y multitarea, el sistema permite una experiencia de juego fluida y rápida, respondiendo a la interacción del usuario sin bloqueos.
+
+Y la salida en este caso es:
+```
+Dirección IP: 192.168.4.1
+Juego iniciado
+Puntuación: 5
+Tiempo restante: 20
+
+```
 
 
 
